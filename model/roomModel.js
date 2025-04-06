@@ -38,7 +38,7 @@ const RoomSchema = new mongoose.Schema({
     enum: ["available", "not available"],
     default: "available",
   },
-  numberOfRooms: {
+  numberOfRooms: {  
     type: Number,
     required: true,
   }

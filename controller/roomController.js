@@ -1,18 +1,14 @@
 const Room = require("../model/roomModel");
+const User = require("../model/userModel");
+const Institution = require("../model/institutionModel");
 
 exports.createRoom = async (req, res) => {
-  const { location, cost, agentFee, agent, institution, photos, distance } =
+  const { location, cost, agentFee, photos, distance ,numberOfRooms} =
     req.body;
 
-  if (
-    !location ||
-    !cost ||
-    !agentFee ||
-    !agent ||
-    !institution ||
-    !photos ||
-    !distance
-  ) {
+  const {agentId}=req.params
+  
+  if (!location ||!cost ||!agentFee ||!agentId ||!photos ||!distance || !numberOfRooms) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -20,7 +16,26 @@ exports.createRoom = async (req, res) => {
     return res.status(400).json({ message: "Maxmum number of photos in 5" });
   }
 
+  
   try {
+
+      const agentdata = await User.findById(agentId).select("role").select("institution");
+      if (!agentdata) {
+        return res.status(404).json({ message: "Agent not found" });
+      }
+      if (agentdata.role !== "agent") {
+        return res.status(400).json({ message: "you are not eligible to post hostels" });
+      }
+      if (!agentdata.institution) { 
+        return res.status(400).json({ message: "Agent does not belong to any institution" });
+      }
+    const institutionData = await Institution.findOne({name:agentdata.institution});
+    if (!institutionData) {
+      return res.status(404).json({ message: "Institution not found" });
+    }
+   
+    const institution = institutionData._id;
+    const agent = agentdata._id
     const room = await Room.create({
       location,
       cost,
@@ -28,6 +43,7 @@ exports.createRoom = async (req, res) => {
       agent,
       institution,
       photos,
+      numberOfRooms,
       distance,
     });
     if (!room) {
@@ -36,7 +52,7 @@ exports.createRoom = async (req, res) => {
 
     res.status(201).json({ message: "Room created successfully", room });
   } catch (error) {
-    res.status(400).json({ message: "Error creating room", error });
+    res.status(400).json({ message: error.message });
   }
 };
 
@@ -72,32 +88,23 @@ exports.getRoomById = async (req, res) => {
 
 exports.updateRoom = async (req, res) => {
   const { id } = req.params;
-  const { location, cost, agentFee, agent, institution, photos, distance } =
+  const { location, cost, agentFee,numberOfRooms, photos, distance } =
     req.body;
-
-  if(
-    !location ||
-    !cost ||
-    !agentFee ||
-    !agent ||
-    !institution ||
-    !photos ||
-    !distance
-  ) {
-    return res.status(400).json({ message: "All fields are required" });
+   //patch
+   if (!location && !cost && !agentFee && !photos && !distance && !numberOfRooms) {
+    return res.status(400).json({ message: "At least one field is required" });
   }
   if (photos.length > 5) {
-    return res.status(400).json({ message: "Maxmum number of photos in 5" });
+    return res.status(400).json({ message: "Maxmum number of hostel photos to upload is 5" });
   }
   try{
     const room= await Room.findByIdAndUpdate(id, {
       location,
       cost,
       agentFee,
-      agent,
-      institution,
       photos,
-      distance
+      distance,
+      numberOfRooms
     }, { new: true });
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
@@ -125,8 +132,31 @@ exports.deleteRoom = async (req, res) => {
 exports.searchRooms = async (req, res) => {
   const {  cost ,institution } =req.query;
 
+  const searchingCreteria = {
+    status: 'available',};
+
+  if (cost) {
+    if (isNaN(cost)) {
+      return res.status(400).json({ message: "Cost must be a number" });
+    }
+    const constNumber=Number(cost)
+    searchingCreteria.cost = { $gte: constNumber - 5000, $lte: constNumber + 20000 };
+    }
+
+  
   try {
-    const rooms = await Room.find({cost,institution});
+    if (!institution) {
+        return res.status(404).json({ message: "Institution not provided" });
+      }
+
+    
+    const institutionData = await Institution.findOne({ name: institution })
+    if (!institutionData) {
+      return res.status(404).json({ message: "Institution not found" });
+    }
+    searchingCreteria.institution = institutionData._id;
+    console.log(searchingCreteria);
+    const rooms = await Room.find(searchingCreteria);
     if (!rooms) {
       return res.status(404).json({ message: "No rooms found" });
     }
@@ -172,8 +202,13 @@ exports.getBookedRoomsForAllUniversities = async (req, res) => {
   }
 }
 exports.getAvailableRoomsForSpecificUniversity = async (req, res) => {
-  const { institutionId } = req.params;
+  const { institution } = req.query;
   try {
+    const institutionData = await Institution.findOne({ name: institution })
+    if (!institutionData) {
+      return res.status(404).json({ message: "Institution not found" });
+    }
+    const institutionId = institutionData._id;
     const rooms = await Room.find({ institution: institutionId, status: "available" });
     if (!rooms) {
       return res.status(404).json({ message: "No available rooms found" });
