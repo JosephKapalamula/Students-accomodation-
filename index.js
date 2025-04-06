@@ -1,4 +1,5 @@
-const express = require('express');
+const express = require('express')
+require('dotenv').config({path: './config.env'}); ;
 const cors = require('cors');
 const app = express();
 const helmet = require('helmet');
@@ -7,6 +8,7 @@ const ratelimit = require('express-rate-limit');
 const mongosanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp= require('hpp');
+
 
 
 // app.use(mongosanitize());data sanitization against nosql query injection
@@ -29,7 +31,9 @@ const limiter = ratelimit({
 
 
 //Routes
-const userRoutes= require('./routes/userRoutes');
+const userRoutes= require('./routes/userRoutes');//userRoutes
+const institutionRoutes= require('./routes/institutionRoutes');//institutionRoutes
+const roomRoutes= require('./routes/roomRoutes');//roomRoutes
 
 
 
@@ -37,6 +41,9 @@ const userRoutes= require('./routes/userRoutes');
    
   
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/institution', institutionRoutes);
+app.use('/api/v1/room', roomRoutes);
+
 
 
 

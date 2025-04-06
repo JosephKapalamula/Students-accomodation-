@@ -33,7 +33,21 @@ const RoomSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-});
+  status:{
+    type: String,
+    enum: ["available", "not available"],
+    default: "available",
+  },
+  numberOfRooms: {
+    type: Number,
+    required: true,
+  }
+
+},
+  {
+    timestamps: true,
+  }
+);
 
 const Room = mongoose.model("Room", RoomSchema);
 

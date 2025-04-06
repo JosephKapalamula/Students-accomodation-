@@ -13,7 +13,7 @@ Thumbs.db
 
 # Environment files
 .env
-
+config.env
 # Build and coverage directories
 dist/
 build/
