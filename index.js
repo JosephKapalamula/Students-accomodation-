@@ -21,12 +21,12 @@ app.use(express.urlencoded({ extended: true }));
 
 
 //limit request from same api route
-const limiter = ratelimit({
-    max: 100,
-    windoMs: 60 * 60 * 1000, // 1hr,
-    message: "too many requests per hour please try in an hour",
-  });
-  app.use("/api", limiter); 
+// const limiter = ratelimit({
+//     max: 100,
+//     windoMs: 60 * 60 * 1000, // 1hr,
+//     message: "too many requests per hour please try in an hour",
+//   }); 
+//   app.use("/api", limiter); 
 
 
 
@@ -34,6 +34,8 @@ const limiter = ratelimit({
 const userRoutes= require('./routes/userRoutes');//userRoutes
 const institutionRoutes= require('./routes/institutionRoutes');//institutionRoutes
 const roomRoutes= require('./routes/roomRoutes');//roomRoutes
+const transactionRoutes= require('./routes/transactionRoutes');//transactionRoutes
+const paymentRoutes= require('./routes/paymentRoutes');//paymentRoutes 
 
 
 
@@ -41,8 +43,10 @@ const roomRoutes= require('./routes/roomRoutes');//roomRoutes
    
   
 app.use('/api/v1/user', userRoutes);
-app.use('/api/v1/institution', institutionRoutes);
+app.use('/api/v1/institution', institutionRoutes); 
 app.use('/api/v1/room', roomRoutes);
+app.use('/api/v1/transaction', transactionRoutes);
+app.use('/api/v1/payment', paymentRoutes);
 
 
 

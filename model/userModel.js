@@ -42,8 +42,20 @@ const UserSchema = new mongoose.Schema({
     resetPasswordExpire: {
         type: Date,
         select: false,
-    }
-
+    },
+    phoneNumberS:{
+        type: [String],
+        validate: {
+            validator: function (value) {
+              // Require at least one phone number if role is 'admin' or 'agent'
+              if (this.role === 'agent') {
+                return Array.isArray(value) && value.length > 0;
+              }
+              return true; // Don't require for regular users
+            },
+            message: 'At least one phone number is required for admin or agent.',
+          }
+    },
 }, { timestamps: true }
 ); 
 

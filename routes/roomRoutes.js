@@ -12,4 +12,4 @@ router.route('/availableRoomsForAll').get(roomController.getAvailableRoomsForAll
 router.route('/:id').get(roomController.getRoomById).patch(roomController.updateRoom).delete(roomController.deleteRoom);
 
 
-module.exports = router; 
+module.exports = router;        

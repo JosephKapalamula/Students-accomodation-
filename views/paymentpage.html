@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>Hostel Booking</title>
+    <script src="https://js.paychangu.com/paychangu.js"></script>
+  </head>
+  <body>
+    <h2>Hostel Booking Payment</h2>
+    <p>Amount: $200.00</p>
+    <button id="payButton">Pay Now</button>
+
+    <script>
+      document
+        .getElementById("payButton")
+        .addEventListener("click", async () => {
+          const bookingId = "12345"; // This will be dynamic
+          const totalPrice = 20000; // This will be dynamic
+
+          try {
+            // Initiate payment session by calling backend API
+            const response = await fetch("http://localhost:3000/api/v1/payment/initiate-payment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            console.log("Payment session response:", data);
+            
+            console.log("Payment session initiated:", data);
+            if (data.checkout_url) {
+              // Redirect the user to PayChangu for payment
+              window.location.href = data.checkout_url;
+            }
+          } catch (error) {
+            console.error("Payment initiation failed:", error);
+          }
+        });
+    </script>
+  </body>
+</html>

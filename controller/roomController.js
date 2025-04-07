@@ -130,7 +130,7 @@ exports.deleteRoom = async (req, res) => {
 }
 
 exports.searchRooms = async (req, res) => {
-  const {  cost ,institution } =req.query;
+  const {  cost ,institutionId } =req.query;
 
   const searchingCreteria = {
     status: 'available',};
@@ -145,17 +145,16 @@ exports.searchRooms = async (req, res) => {
 
   
   try {
-    if (!institution) {
+    if (!institutionId) {
         return res.status(404).json({ message: "Institution not provided" });
       }
 
     
-    const institutionData = await Institution.findOne({ name: institution })
-    if (!institutionData) {
+    const institution = await Institution.findById(institutionId);
+    if (!institution) {
       return res.status(404).json({ message: "Institution not found" });
     }
-    searchingCreteria.institution = institutionData._id;
-    console.log(searchingCreteria);
+    searchingCreteria.institution = institution._id;
     const rooms = await Room.find(searchingCreteria);
     if (!rooms) {
       return res.status(404).json({ message: "No rooms found" });
@@ -202,13 +201,13 @@ exports.getBookedRoomsForAllUniversities = async (req, res) => {
   }
 }
 exports.getAvailableRoomsForSpecificUniversity = async (req, res) => {
-  const { institution } = req.query;
+  let { institutionId } = req.query;
   try {
-    const institutionData = await Institution.findOne({ name: institution })
-    if (!institutionData) {
+    const institution = await Institution.findById(institutionId);
+    if (!institution) {
       return res.status(404).json({ message: "Institution not found" });
     }
-    const institutionId = institutionData._id;
+    institutionId = institution._id;
     const rooms = await Room.find({ institution: institutionId, status: "available" });
     if (!rooms) {
       return res.status(404).json({ message: "No available rooms found" });
