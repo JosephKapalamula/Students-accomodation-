@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const validator = require("validator");
 const crypto = require('crypto');
+const Institution=require('./institutionModel');
 
 
 const UserSchema = new mongoose.Schema({
@@ -15,7 +16,6 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
         minlength: 8,
-        select: false,
         validate: {
             validator:validator.isEmail,
             message: 'Invalid email format',
@@ -27,9 +27,10 @@ const UserSchema = new mongoose.Schema({
         minlength: 7,
     },
     institution: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institution',
         required: true,
-    },
+        },
     role: {
         type: String,
         enum: ['admin','agent','user'],
@@ -56,6 +57,20 @@ const UserSchema = new mongoose.Schema({
             message: 'At least one phone number is required for admin or agent.',
           }
     },
+    isVerified: {
+        type: Boolean,
+        default: false,
+        required: function () {
+          return this.role === 'agent';
+        },
+        select: false,
+      },
+    transactions: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Transaction',
+        },
+    ],
 }, { timestamps: true }
 ); 
 

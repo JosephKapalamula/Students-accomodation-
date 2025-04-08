@@ -48,6 +48,11 @@ const RoomSchema = new mongoose.Schema({
       ref: "Transaction",
     },
   ],
+  isVerified:{
+    type: Boolean,
+    default: false,
+    select: false,
+  }
 
 },
   {

@@ -28,7 +28,7 @@ exports.logIn = async (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ message: 'Please fill in all fields' });
     }
-    try{
+    try{ 
         const user = await User.findOne({ email }).select('+password');
         if (!user || !(await user.matchPassword(password))) {
             return res.status(401).json({ message: 'Invalid credentials' });

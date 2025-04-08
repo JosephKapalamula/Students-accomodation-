@@ -1,9 +1,10 @@
 const institutionController = require("../controller/institutionController");
 const router = require("express").Router();
+const {protect,authorize}=require('../middlewares/auth')
 
-router.route("/").get(institutionController.getAllInstitutions).post(institutionController.createInstitution);
-router.route("/:id").get(institutionController.getInstitutionById).patch(institutionController.updateInstitution).delete(institutionController.deleteInstitution);
-router.route("/institutionRooms/:institutionId").get(institutionController.getInstitutionRooms);
-router.route("/institutionTransactions/:institutionId").get(institutionController.getInstitutionTransactions);
+router.route("/").get(protect,authorize("admin"),institutionController.getAllInstitutions).post(protect,authorize("admin"),institutionController.createInstitution);
+router.route("/:institutionId").get(protect,authorize("admin"),institutionController.getInstitutionById).patch(protect,authorize("admin"),institutionController.updateInstitution).delete(protect,authorize('admin'),institutionController.deleteInstitution);
+router.route("/institutionRooms/:institutionId").get(protect,authorize("admin"),institutionController.getInstitutionRooms);
+router.route("/institutionTransactions/:institutionId").get(protect,authorize("admin"),institutionController.getInstitutionTransactions);
 
 module.exports = router;

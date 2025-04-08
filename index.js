@@ -36,6 +36,7 @@ const institutionRoutes= require('./routes/institutionRoutes');//institutionRout
 const roomRoutes= require('./routes/roomRoutes');//roomRoutes
 const transactionRoutes= require('./routes/transactionRoutes');//transactionRoutes
 const paymentRoutes= require('./routes/paymentRoutes');//paymentRoutes 
+const adminRoutes= require('./routes/adminRoutes');//adminRoutes
 
 
 
@@ -47,6 +48,7 @@ app.use('/api/v1/institution', institutionRoutes);
 app.use('/api/v1/room', roomRoutes);
 app.use('/api/v1/transaction', transactionRoutes);
 app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 
 

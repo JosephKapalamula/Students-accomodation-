@@ -32,7 +32,7 @@ exports.getAllInstitutions = async (req, res) => {
 }
 
 exports.getInstitutionById = async (req, res) => {
-    const { id } = req.params;
+    const { institutionId } = req.params;
     try {
         const institution = await Institution.findById(id);
         if (!institution) {
@@ -46,7 +46,7 @@ exports.getInstitutionById = async (req, res) => {
 }
 
 exports.updateInstitution = async (req, res) => {
-    const { id } = req.params;
+    const { institutionId } = req.params;
     const { name } = req.body;
     try{
         const institution= await Institution.findByIdAndUpdate(id, { name }, { new: true });
@@ -61,7 +61,7 @@ exports.updateInstitution = async (req, res) => {
 }
 
 exports.deleteInstitution = async (req, res) => {
-    const { id } = req.params;
+    const { institutionId } = req.params;
     try {
         const institution = await Institution.findByIdAndDelete(id);
         if (!institution) {

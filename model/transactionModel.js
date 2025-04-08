@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Instituion = require('./institutionModel'); // to keep track of all transaction for specific university
 
 const TransactionSchema = new mongoose.Schema({
     room: {
@@ -15,6 +16,11 @@ const TransactionSchema = new mongoose.Schema({
         type: String,
         enum: ['pending', 'completed', 'cancelled'],
         default: 'pending',
+    },
+    institution: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Institution',
+        required: true,
     },
 })
 

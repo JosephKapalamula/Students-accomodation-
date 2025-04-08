@@ -6,9 +6,9 @@ exports.createRoom = async (req, res) => {
   const { location, cost, agentFee, photos, distance ,numberOfRooms} =
     req.body;
 
-  const {agentId}=req.params
+  const {agentId}=req.user._id
   
-  if (!location ||!cost ||!agentFee ||!agentId ||!photos ||!distance || !numberOfRooms) {
+  if (!location ||!cost ||!agentFee ||!photos ||!distance || !numberOfRooms) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -19,7 +19,7 @@ exports.createRoom = async (req, res) => {
   
   try {
 
-      const agentdata = await User.findById(agentId).select("role").select("institution");
+      const agentdata = await User.findById(agentId).select("+isVerified");  
       if (!agentdata) {
         return res.status(404).json({ message: "Agent not found" });
       }
@@ -29,9 +29,12 @@ exports.createRoom = async (req, res) => {
       if (!agentdata.institution) { 
         return res.status(400).json({ message: "Agent does not belong to any institution" });
       }
-    const institutionData = await Institution.findOne({name:agentdata.institution});
+      if (!agentdata.isVerified) {
+        return res.status(400).json({ message: "you are not verified to start posting hostel,we will send email after verifying you please get in touch with our admin" });
+      }
+    const institutionData = await Institution.findById({institution:agentdata.institution});
     if (!institutionData) {
-      return res.status(404).json({ message: "Institution not found" });
+      return res.status(404).json({ message: "Institution you are posting to is not found " });
     }
    
     const institution = institutionData._id;
@@ -73,9 +76,9 @@ exports.getAllRooms = async (req, res) => {
 }
 
 exports.getRoomById = async (req, res) => {
-  const { id } = req.params;
+  const { roomId } = req.params;
   try{
-    const room= await Room.findById(id);
+    const room= await Room.findById(roomId);
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
@@ -87,7 +90,7 @@ exports.getRoomById = async (req, res) => {
 }
 
 exports.updateRoom = async (req, res) => {
-  const { id } = req.params;
+  const { roomId } = req.params;
   const { location, cost, agentFee,numberOfRooms, photos, distance } =
     req.body;
    //patch
@@ -98,7 +101,7 @@ exports.updateRoom = async (req, res) => {
     return res.status(400).json({ message: "Maxmum number of hostel photos to upload is 5" });
   }
   try{
-    const room= await Room.findByIdAndUpdate(id, {
+    const room= await Room.findByIdAndUpdate(roomId, {
       location,
       cost,
       agentFee,
@@ -116,9 +119,9 @@ exports.updateRoom = async (req, res) => {
 }
 
 exports.deleteRoom = async (req, res) => {
-  const { id } = req.params;
+  const { roomId } = req.params;
   try {
-    const room = await Room.findByIdAndDelete(id);
+    const room = await Room.findByIdAndDelete(roomId);
     if (!room) {
       return res.status(404).json({ message: "Room not found" });
     }
@@ -133,7 +136,9 @@ exports.searchRooms = async (req, res) => {
   const {  cost ,institutionId } =req.query;
 
   const searchingCreteria = {
-    status: 'available',};
+    status: 'available',
+    isVerified: true,
+  };
 
   if (cost) {
     if (isNaN(cost)) {

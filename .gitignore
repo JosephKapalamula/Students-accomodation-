@@ -18,3 +18,5 @@ config.env
 dist/
 build/
 coverage/
+# Temporary files
+views/  

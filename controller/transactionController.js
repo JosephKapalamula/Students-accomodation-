@@ -4,7 +4,8 @@ const User = require("../model/userModel");
 
 exports.bookRoom = async (req, res) => {
   const { roomId } = req.params;
-  const { userId } = req.body;
+  const userId= req.user._id;
+  const institutionId = req.user.institution;  //will updated so that user can book room in any institution
 
   try {
     const room = await Room.findById(roomId);
@@ -15,15 +16,11 @@ exports.bookRoom = async (req, res) => {
       return res.status(400).json({ message: "Room is not available" });
     }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
 
     const transaction = await Transaction.create({
       room: room._id,
-      user: user._id,
-      status: "pending",
+      user: userId,
+      institution: institutionId,
     });
 
     if (!transaction) {
@@ -31,7 +28,6 @@ exports.bookRoom = async (req, res) => {
         .status(400)
         .json({ message: "Error creating booking a room try again later" });
     }
-
     res.status(201).json({ message: "Room booked successfully", transaction });
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -57,7 +53,7 @@ exports.getAllTransactions = async (req, res) => {
   }
 };
 exports.getTransactionById = async (req, res) => {
-  const { id } = req.params;
+  const { transactionId } = req.params;
   try {
     const transaction = await Transaction.findById(id)
       .populate("room")

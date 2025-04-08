@@ -6,23 +6,20 @@ const sendMail=require("../utils/email");
 
 exports.initialisePayment = async (req, res) => {
 
-//   const { amount,bookingId,userId,firstName,lastName} = req.query;
+//   const { amount,bookingId,firstName,lastName} = req.query;
+//   const userId = req.user._id;
 
 //   if (!amount || bookingId) {
 //     return res.status(400).json({ message: "All fields are required" });
 //   }
-  
-//   const user=await User.findById(userId).select('email');
-//   if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//   }
-//   const userEmail = user.email;
+//   const userEmail = req.user.email;
 //   const transaction = await Transaction.findById(bookingId);
 //   if (!transaction) {
 //   return res.status(404).json({ message: "Transaction not found" });
 //   }
+//   txt_ref = bookingId ;  //this good transaction refference 
 //   generate unique transaction reference
-    const timestamp = Date.now(); // e.g., 1712490559054
+    const timestamp = Date.now(); 
     const random = Math.floor(Math.random() * 1000); // e.g., 853
     const tx_ref = `TXN-${timestamp}-${random}`;
     amount =200
@@ -77,9 +74,7 @@ exports.verifyPayment = async (req, res) => {
             }
           );
         
-        if (response.data.data.status !== "success") {
-            return res.status(400).json({ message: "Payment verification failed" });
-          }
+        if (response.data.data.status== "success") {
         // if(response.data.amount!==transaction.amount){
         //     return res.status(400).json({ message: "Payment amount mismatch" });
         // }
@@ -122,6 +117,20 @@ exports.verifyPayment = async (req, res) => {
         console.log("response2", response.data.data.customer.last_name);
 
         res.status(200).json({ message: "Payment verified successfully" });
+        }
+        else{
+            const transaction = await Transaction.findOne({tx_ref});
+        if (!transaction) {
+            return res.status(404).json({ message: "Transaction not found" });
+        }
+        if (transaction.status === "completed") {
+          return res.status(400).json({ message: "Transaction already completed" });
+        }
+        transaction.status ='cancelled';
+        await transaction.save();
+        return res.status(400).json({ message: "Payment not verified" });
+        }
+        
         
 
     }catch(error){
