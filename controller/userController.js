@@ -1,6 +1,6 @@
 const User = require('../model/userModel');
 const sendEmail = require('../utils/email');
-const crypto = require('crypto');
+const crypto = require('crypto'); 
 
 
 exports.signUp = async (req, res) => {
@@ -66,12 +66,12 @@ exports.logOut = async (req, res) => {
     }
 }
 exports.getUser = async (req, res) => {
-    const { id } = req.params;
-    if (!id) {
+    const { userId } = req.params;
+    if (!userId) {
         return res.status(400).json({ message: 'Please provide a user ID' });
     }
     try{
-        const user = await User.findById(id);
+        const user = await User.findById(userId);
     if (!user) {
         return res.status(404).json({ message: 'User not found' });
     }
@@ -84,12 +84,12 @@ exports.getUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
-    const { id } = req.params;
-    if (!id) {
+    const {userId } = req.params;
+    if (!userId) {
         return res.status(400).json({ message: 'Please provide a user ID' });
     }
     try{
-        const user = await User.findByIdAndDelete(id);
+        const user = await User.findByIdAndDelete(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
