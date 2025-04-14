@@ -54,7 +54,7 @@ const RoomSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["single", "shared", "both"],
+      enum: ["boys", "girls", "both"],
       
     },
   },

@@ -3,7 +3,7 @@ const User = require("../model/userModel");
 const Institution = require("../model/institutionModel");
 
 exports.createRoom = async (req, res) => {
-  const { location, cost, agentFee, numberOfRooms, photos, distance,category } =req.body;
+  const { location, cost, agentFee, numberOfRooms, photos, distance,category,type} =req.body;
   const agentId=req.user._id
   const institutionId=req.user.institution
   if (photos.length > 5) {

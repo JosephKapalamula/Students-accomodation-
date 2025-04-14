@@ -47,7 +47,7 @@ exports.upload = (req, res, next) => {
     .then(() => {
       const photos = req.files.map((file) => file.publicUrl);
       console.log(req.body);
-      const {location, cost, agentFee, numberOfRooms, distance,category} = req.body;
+      const {location, cost, agentFee, numberOfRooms, distance,category,type} = req.body;
       if (!location || !cost || !agentFee || !numberOfRooms || !distance) {
         return res.status(400).json({ error: "All fields are required" });
       }
@@ -58,7 +58,8 @@ exports.upload = (req, res, next) => {
         agentFee,
         numberOfRooms,
         distance,
-        category
+        category,
+        type
       };
       req.body = responseData;
       next();
