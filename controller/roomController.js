@@ -43,7 +43,8 @@ exports.createRoom = async (req, res) => {
       photos,
       numberOfRooms,
       distance,
-      category
+      category,
+      type
     });
     if (!room) {
       return res.status(400).json({ message: "Error creating room" });
