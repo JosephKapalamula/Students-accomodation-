@@ -5,7 +5,7 @@ const {uploadMiddleware,upload}=require('../middlewares/multer');
 
 
 router.route('/').get(protect,authorize('admin'),roomController.getAllRooms)
-router.route('/createRoom').post(protect,uploadMiddleware,upload,roomController.createRoom);// note to upload yu need agentId
+router.route('/createRoom').post(protect,authorize('agent'),uploadMiddleware,upload,roomController.createRoom);// note to upload yu need agentId
 router.route('/search').get(protect,roomController.searchRooms);
 router.route('/bookedRooms/:InstitionId').get(protect,authorize('admin'),roomController.getBookedRoomsForSpecificUniversity)
 router.route('/bookedRooms').get(protect,authorize('admin'),roomController.getBookedRoomsForAllUniversities)
