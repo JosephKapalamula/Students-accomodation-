@@ -30,7 +30,7 @@ const RoomSchema = new mongoose.Schema({
     },
   ],
   distance: {
-    type: Number,
+    type: String,
     required: true,
   },
   status:{
@@ -42,23 +42,34 @@ const RoomSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  transactions: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Transaction",
-    },
-  ],
-  isVerified:{
-    type: Boolean,
-    default: false,
-    select: false,
+  type: {
+    type: String,
+    enum: ["single", "shared"],
+    required: true,
+  },
+  class: {
+    type: String,
+    enum: ["luxurious", "affordable"],
+  },
+  category:{
+    type: String,
+    enum:["single","shared","both"],
+    required: true,
   }
-
+  
 },
   {
     timestamps: true,
   }
 );
+RoomSchema.pre('save', function (next) {
+  if (this.cost < 50000) {
+    this.class = 'affordable';
+  } else {
+    this.class = 'luxurious';
+  }
+  next();
+});
 
 const Room = mongoose.model("Room", RoomSchema);
 

@@ -96,9 +96,6 @@ exports.verifyPayment = async (req, res) => {
               room.status='not available';
           }
           const agentPhoneNumbers=room.agent.phoneNumbers;
-          
-          room.transactions.push(transaction._id);
-          await room.save();
           const user = await User.findById(transaction.user);
           if (!user) {
               return res.status(404).json({ message: "User not found" });

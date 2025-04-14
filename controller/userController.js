@@ -4,12 +4,12 @@ const crypto = require('crypto');
 
 
 exports.signUp = async (req, res) => {
-    const { userName, email, password ,institution,role} = req.body;
+    const { userName, email, password ,institution,role,phoneNumberS} = req.body;
     if (!userName || !email || !password || !institution || !role) {
         return res.status(400).json({ message: 'Please fill in all fields' });
     }
     try {
-        const user = await User.create({ userName, email, password, institution, role });
+        const user = await User.create({ userName, email, password, institution, role ,phoneNumberS});
         const token=user.generateToken();
         return res.status(201).json({ message: 'User created successfully',user,token: token });
 
