@@ -1,72 +1,72 @@
 const mongoose = require("mongoose");
 
-const RoomSchema = new mongoose.Schema({
-  location: {
-    type: String,
-    required: true,
-  },
-  cost: {
-    type: Number,
-    required: true,
-  },
-  agentFee: {
-    type: Number,
-    required: true,
-  },
-  agent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  institution: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Institution",
-    required: true,
-  },
-  photos: [
-    {
+const RoomSchema = new mongoose.Schema(
+  {
+    location: {
       type: String,
       required: true,
     },
-  ],
-  distance: {
-    type: String,
-    required: true,
+    cost: {
+      type: Number,
+      required: true,
+    },
+    agentFee: {
+      type: Number,
+      required: true,
+    },
+    agent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    institution: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Institution",
+      required: true,
+    },
+    photos: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+    distance: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["available", "not available"],
+      default: "available",
+    },
+    numberOfRooms: {
+      type: Number,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ["single", "shared"],
+      required: true,
+    },
+    class: {
+      type: String,
+      enum: ["luxurious", "affordable"],
+    },
+    category: {
+      type: String,
+      enum: ["single", "shared", "both"],
+      
+    },
   },
-  status:{
-    type: String,
-    enum: ["available", "not available"],
-    default: "available",
-  },
-  numberOfRooms: {  
-    type: Number,
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: ["single", "shared"],
-    required: true,
-  },
-  class: {
-    type: String,
-    enum: ["luxurious", "affordable"],
-  },
-  category:{
-    type: String,
-    enum:["single","shared","both"],
-    required: true,
-  }
-  
-},
   {
     timestamps: true,
   }
 );
-RoomSchema.pre('save', function (next) {
+RoomSchema.pre("save", function (next) {
   if (this.cost < 50000) {
-    this.class = 'affordable';
+    this.class = "affordable";
   } else {
-    this.class = 'luxurious';
+    this.class = "luxurious";
   }
   next();
 });
