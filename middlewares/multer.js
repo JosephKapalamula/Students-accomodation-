@@ -76,5 +76,5 @@ const uploadMiddleware = multer({
       cb(new Error('Only image files are allowed!'), false); 
     }
   }
-}).array("files");
+}).array("photos");
 exports.uploadMiddleware = uploadMiddleware;
