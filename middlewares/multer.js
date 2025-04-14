@@ -58,6 +58,7 @@ exports.upload = (req, res, next) => {
         agentFee,
         numberOfRooms,
         distance,
+        category
       };
       req.body = responseData;
       next();
